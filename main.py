@@ -74,30 +74,26 @@ def Interpolate(splines, x):
     return s.a + (s.b + (s.c / 2.0 + s.d * dx / 6.0) * dx) * dx
 
 
-x = [round(1/i, 4) for i in range(1, 6)]
-y = [round(math.sin(math.pi*el), 4) for el in x]
-print(*x, '\n', *y)
+x = [round(1/i, 6) for i in range(6, 1, -1)]
+y = [round(math.sin(math.pi*el), 6) for el in x]
+# print(*x, '\n', *y)
 
 spline = BuildSpline(x, y, len(x))
-x_ex = [0.8, 0.4]
-y_ex = [Interpolate(spline, el) for el in x_ex]
+x_ex = [0.4, 0.3]
+y_ex = [round(Interpolate(spline, el), 6) for el in x_ex]
 
 print()
 
 ###################################################################################################################
 
-print(" y = sin((PI * x)) ".center(40, '#'))
+print(" y = sin(PI * x) ".center(40, '#'))
 print(f'Точное значение'.center(40, '-'))
-[print(f'x = {x_ex[i]} | y = {round(math.sin(math.pi*x_ex[i]), 4)}'.center(40, " ")) for i in range(2)]
+[print(f'x = {x_ex[i]} | y = {round(math.sin(math.pi*x_ex[i]), 6)}'.center(40, " ")) for i in range(2)]
 print(f'Приблизительное значение'.center(40, '-'))
 [print(f'x = {x_ex[i]} | y = {y_ex[i]}'.center(40, " ")) for i in range(2)]
 print(f'Погрешность'.center(40, '*'))
-[print(f'{round(abs(round(math.sin(math.pi*x_ex[i]), 4) - y_ex[i]), 10)}'.center(40, " ")) for i in range(2)]
+[print(f'{round(abs(round(math.sin(math.pi*x_ex[i]), 6) - y_ex[i]), 10)}'.center(40, " ")) for i in range(2)]
 
 ###################################################################################################################
 
 print()
-
-    
-spline = BuildSpline([1, 3, 7, 9], [5, 6, 7, 8], 4)
-print(Interpolate(spline, 5))
