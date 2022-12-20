@@ -2,7 +2,7 @@ import math
 
 # Структура, описывающая сплайн на каждом сегменте сетки
 class SplineTuple:
-    def __init__(self, a, b, c, d, x):
+    def __init__(self, a = 0, b = 0, c = 0, d = 0, x = 0):
         self.a = a
         self.b = b
         self.c = c
@@ -11,10 +11,10 @@ class SplineTuple:
  
 # Построение сплайна
 def BuildSpline(x, y, n):
-    # x - узлы сетки, должны быть упорядочены по возрастанию, чётные узлы запрещены
+    # x - узлы сетки
     # y - значения функции в узлах сетки
     # n - количество узлов сетки
-    splines = [SplineTuple(0, 0, 0, 0, 0) for _ in range(0, n)]
+    splines = [SplineTuple() for _ in range(0, n)]
     for i in range(0, n):
         splines[i].x = x[i]
         splines[i].a = y[i]
@@ -53,7 +53,7 @@ def BuildSpline(x, y, n):
 # Вычисление значения интерполированной функции в произвольной точке
 def Interpolate(splines, x):
     n = len(splines)
-    s = SplineTuple(0, 0, 0, 0, 0)
+    s = SplineTuple()
     
     if x <= splines[0].x: # Если x меньше точки сетки x[0] - пользуемся первым эл-тов массива
         s = splines[0]
@@ -71,28 +71,47 @@ def Interpolate(splines, x):
         s = splines[j]
 
     dx = x - s.x
-    return s.a + (s.b + (s.c / 2.0 + s.d * dx / 6.0) * dx) * dx
+    return round(s.a + (s.b + (s.c / 2.0 + s.d * dx / 6.0) * dx) * dx, 8)
 
+otstup = 100
 
-x = [round(1/i, 6) for i in range(6, 1, -1)]
-y = [round(math.sin(math.pi*el), 6) for el in x]
-# print(*x, '\n', *y)
+###################################################################################################################
+
+print(" y = sin((PI * x)) ".center(otstup, '#'))
+print("Введите начало отрезка".center(otstup, '-'))
+xl = int(input(''.center(round(otstup/2), ' ')))
+print("Введите конец отрезка".center(otstup, '-'))
+xr = int(input(''.center(round(otstup/2), ' ')))
+print("Введите количество узлов".center(otstup, '-'))
+knot = int(input(''.center(round(otstup/2), ' ')))
+
+###################################################################################################################
+
+sr = (xr-xl)/knot
+x = []
+temp = xl
+for i in range(knot + 1):
+    x.append(temp)
+    temp += sr
+y = [round(math.sin(math.pi*el), 8)for el in x]
 
 spline = BuildSpline(x, y, len(x))
-x_ex = [0.4, 0.3]
-y_ex = [round(Interpolate(spline, el), 6) for el in x_ex]
+
+###################################################################################################################
+
+x_ex = [float(input('введите произвольну точку: ')) for _ in range(2)]
+y_ex = [Interpolate(spline, el) for el in x_ex]
+
+###################################################################################################################
 
 print()
 
 ###################################################################################################################
 
-print(" y = sin(PI * x) ".center(40, '#'))
-print(f'Точное значение'.center(40, '-'))
-[print(f'x = {x_ex[i]} | y = {round(math.sin(math.pi*x_ex[i]), 6)}'.center(40, " ")) for i in range(2)]
-print(f'Приблизительное значение'.center(40, '-'))
-[print(f'x = {x_ex[i]} | y = {y_ex[i]}'.center(40, " ")) for i in range(2)]
-print(f'Погрешность'.center(40, '*'))
-[print(f'{round(abs(round(math.sin(math.pi*x_ex[i]), 6) - y_ex[i]), 10)}'.center(40, " ")) for i in range(2)]
+print(" y = sin((PI * x)) ".center(otstup, '#'))
+print(f''.center(round(otstup/4), ' ') + f'Точное значение'.center(round(otstup/4), ' ')+ f'Приблизительное значение'.center(round(otstup/4), ' ') + f'Погрешность'.center(round(otstup/4), ' '))
+[print(f'x = {x_ex[i]}'.center(round(otstup/4), " ") + f' y = {round(math.sin(math.pi*x_ex[i]), 4)}'.center(round(otstup/4), " ") + f'{y_ex[i]}'.center(round(otstup/4), " ") + 
+f'{round(abs(round(math.sin(math.pi*x_ex[i]), 4) - y_ex[i]), 10)}'.center(round(otstup/4), " ")) for i in range(2)]
 
 ###################################################################################################################
 
